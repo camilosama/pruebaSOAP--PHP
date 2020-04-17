@@ -12,3 +12,4 @@
 */
 
 Route::get('/','pruebaControler@home');
+Route::get('/bd','pruebaControler@bd');

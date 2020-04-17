@@ -9,22 +9,35 @@
 
 
 @section('content')
-    <div class="row">
-        <div class="col-6">EXTENCION</div>
-        <div class="col-6">CANTIDAD</div>
-    </div>
-    <div class="row">
-        @foreach ($data['cantidadExtenciones'] as $info)
-            <div class="col-6">
-                {!! $info->descripcion !!}
-            </div>
-            <div class="col-6">
-                {!! $info->total !!}
-            </div>
-        @endforeach
+
+    <div class="alert alert-success" role="alert">
+        EXTENCIONES DEL WS
     </div>
 
-    <table id="example">
+    <table class="table table-striped table-bordered nowrap" width="100%" id="myTable">
+        <thead>
+        <tr>
+            <th>EXTENCION</th>
+            <th>CANTIDAD</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach ($data['cantidadExtenciones'] as $info)
+            <tr>
+                <td>{!! $info->descripcion !!}</td>
+                <td>{!! $info->total !!}</td>
+            </tr>
+        @endforeach
+        </tbody>
+    </table>
+
+    <hr>
+
+    <div class="alert alert-success" role="alert">
+        ARCHIVOS DEL WS
+    </div>
+
+    <table class="table table-striped table-bordered nowrap" width="80%" id="myTable">
         <thead>
         <tr>
             <th>ID</th>

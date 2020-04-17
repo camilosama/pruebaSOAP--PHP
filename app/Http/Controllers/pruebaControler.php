@@ -1,25 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use DB;
 use Illuminate\Http\Request;
 use SoapClient;
 use Artisaninweb\SoapWrapper\SoapWrapper;
-use DB;
-ini_set('max_execution_time', 50000);
-
+ini_set('max_execution_time', 1800);
 
 class pruebaControler extends Controller
 {
     public function home(){
-/*
-        if(DB::connection()->getDatabaseName())
-        {
-            dd("conncted sucessfully to database ".DB::connection()->getDatabaseName());
-        }
-  */
-
-        $i=1;
 
         // 1) CONECTAR CON WS
         ini_set("soap.wsdl_cache_enabled", "0");
@@ -41,8 +31,6 @@ class pruebaControler extends Controller
         // 4) METODO Y REGSITRO DE DATOS
         $resultado = $cliente->BuscarArchivo($data);
 
-
-
         // 5) RECORRER RESPUESA DE WS ARCHIVO
         foreach ($resultado as $dato) {
 
@@ -52,7 +40,7 @@ class pruebaControler extends Controller
                     //DEFINIR VARIABLES
                    $id=$dato2->Id;
                    $nombre=$dato2->Nombre;
-                    // 5.1) ESZXTRAER POSIBLE EXTENCION
+                    // 5.1) EXTRAER POSIBLE EXTENCION
                     $porciones = explode(".",$nombre);
                     if (!isset($porciones[1])) {
                         $extencion=' ';
@@ -61,15 +49,7 @@ class pruebaControler extends Controller
                     }
 
                     // 5.2) INSERT DE TODAS LAS EXTECIONES ENCONTRADAS
-
-
-                       try {
-                            DB::table('tipo_archivos')->insert(['descripcion' =>  $extencion ]);
-                        } catch (\Exception $e) {
-                            DB::rollback();
-                            return 'Problema al insertar los datos en la tabla tipo_archivos' . $e;
-                        }
-
+                        DB::table('tipo_archivos')->insert(['descripcion' =>  $extencion ]);
                         // 5.3) INSERT DE TODOSLOS REGISTROS
                         try {
                             DB::table('trasnaccion')->insert(['id_tipo' => $id, 'descripcion' =>  $nombre ]);
@@ -79,12 +59,9 @@ class pruebaControler extends Controller
                         }
 
                         DB::commit();
-
-
                 }
         }
-
-
+        //dd($dato);
 
         $datosInsertados= DB::table('trasnaccion')
             ->select("id_tipo","descripcion")
@@ -105,5 +82,17 @@ class pruebaControler extends Controller
 
 
     }
+
+    public function bd(){
+
+        DB::table('tipo_archivos')->insert(['descripcion' =>  'pdf' ]);
+
+        $cantidadExtenciones = DB::table('tipo_archivos')
+            ->select('descripcion', DB::raw('count(descripcion) as total'))
+            ->groupBy('descripcion')
+            ->get();
+
+        dd($cantidadExtenciones);
+}
 
 }
